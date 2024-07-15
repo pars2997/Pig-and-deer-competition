@@ -292,7 +292,7 @@ pigplot <- ggplot()+
   geom_spatraster(data = pig.filtered,maxcell = 1000000) +
   xlim(640000,680000) +
   ylim(3960000,4000000) +
-  scale_fill_viridis_c(option = "magma",direction = -1)+
+  scale_fill_viridis_c(option = "mako",direction = -1)+
   labs(fill = expression("Pred. pig\ndensity (#/km"^2*")"))+
   geom_sf(data = FHLBound,color = "black",fill = NA,lwd = 1)+
   theme_bw()+
@@ -301,7 +301,7 @@ pigplot <- ggplot()+
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10))+
-  ggplot2::annotate("text", x = 678500, y = 3998500, label = "(a)", size = 5)+
+  # ggplot2::annotate("text", x = 678500, y = 3998500, label = "(a)", size = 5)+
   coord_sf(datum = st_crs(pig.filtered))+
   xlab("Easting")+
   ylab("Northing")
@@ -368,7 +368,7 @@ deerplot <- ggplot()+
   geom_spatraster(data = deer.filtered,maxcell = 1000000) +
   xlim(640000,680000) +
   ylim(3960000,4000000) +
-  scale_fill_viridis_c(option = "magma",direction = -1)+
+  scale_fill_viridis_c(option = "mako",direction = -1)+
   # labs(fill = expression("Deer density (#/km" ^2 *")"))+
   labs(fill = expression("Pred. deer\ndensity (#/km"^2*")"))+
   geom_sf(data = FHLBound,color = "black",fill = NA,lwd = 1)+
@@ -378,13 +378,13 @@ deerplot <- ggplot()+
         axis.text = element_text(size = 10),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 10))+
-  ggplot2::annotate("text", x = 678500, y = 3998500, label = "(b)", size = 5)+
+  # ggplot2::annotate("text", x = 678500, y = 3998500, label = "B", size = 5)+
   coord_sf(datum = st_crs(pig.filtered))+
   xlab("Easting")+
   ylab("Northing")
 deerplot
 
-jpeg("../Figures/PigDeerDensity_EA.jpeg",width = 10, height = 4,
+tiff("../Figures/PigDeerDensity_EA.tiff",width = 10, height = 4,
      res = 300, units = "in")
 ggarrange(plotlist = list(pigplot,deerplot),ncol = 2)
 dev.off()

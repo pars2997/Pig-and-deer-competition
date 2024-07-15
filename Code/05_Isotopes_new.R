@@ -57,7 +57,7 @@ legend(x = "topright",legend = c("Deer","Pig"),
        cex = 1.5, pch = 19, col = c("black","red"))
 
 #### Overlap analysis of deer and pigs ####
-palette(viridis(3))
+palette(viridis(2, option = "G", begin = 0.8, end = 0.2))
 # set that all samples come from the same community
 dat$community <- "one"
 # dat <- dat %>% 
@@ -98,7 +98,7 @@ plotSiberObject(siber.data,
                 xlab = expression(paste(delta^(13),"C (\u2030)"))
                 )
 legend(x = "topright", legend = c("deer","pig"), pch = 16, 
-       col = c("#440154", "#21918c"))
+       col = c("#43BBADFF", "#35264CFF"))
 
 # Plot without ellipses
 plotSiberObject(siber.data,
@@ -117,6 +117,8 @@ plotSiberObject(siber.data,
 group.ML <- groupMetricsML(siber.data)
 group.ML
 
+tiff("../Figures/isotopeplot.tiff",res = 300, compression = "lzw",
+     height = 3.5, width = 4, units = "in")
 par(mar = c(5,6,2,2))
 plot(siberdat$iso1,siberdat$iso2, col = as.factor(siberdat$group), 
      pch = 19,
@@ -124,17 +126,18 @@ plot(siberdat$iso1,siberdat$iso2, col = as.factor(siberdat$group),
      xlab = expression(paste(delta^(13),"C (\u2030)")),
      xlim = c(-28,-20),
      ylim = c(-2,10),
-     cex.lab = 1.75,
-     cex.axis = 1.25,
-     cex = 1.5
+     cex.lab = 1,
+     cex.axis = 1,
+     cex = 1
      )
 
 legend(x = "topright", legend = c("deer","pig"), pch = 19,
-       col = c("#440154", "#21918c"),cex = 2)
+       col = c("#43BBADFF", "#35264CFF"),cex = 1)
 
 plotGroupEllipses(siber.data, n = 100, p.interval = 0.95, lty = 1, lwd = 2)
-plotGroupEllipses(siber.data, n = 100, p.interval = 0.95, ci.mean = T, lty = 1, lwd = 2)
+# plotGroupEllipses(siber.data, n = 100, p.interval = 0.95, ci.mean = T, lty = 1, lwd = 2)
 
+dev.off()
 # Calcualte diet overlap based on 95% ellipse and mean ellipse
 ellipse1 <- "one.Deer"
 ellipse2 <- "one.Pig"

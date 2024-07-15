@@ -452,40 +452,42 @@ newdat$pred.se <- predict(mod1,newdat = newdat,se.fit = T,type = "response")$se.
 
 doefawn$propfawn <- doefawn$fawn/(doefawn$doe + doefawn$fawn)
 
+tiff("../Figures/Fawnplot.tiff",res = 300, compression = "lzw",
+     width = 8, height = 4, units = "in")
 par(mfrow = c(1,2))
 par(mar = c(5,5,2,2))
 # par(bg = "#F8F5EE")
 plot(doefawn$propfawn[doefawn$Season == "Summer"] ~ 
-       doefawn$pig[doefawn$Season == "Summer"],col = "darkgreen", pch = 16,
-     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 2,
-     cex.axis = 1.5,ylim = c(0,1))
+       doefawn$pig[doefawn$Season == "Summer"],col = "#43BBADFF", pch = 16,
+     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 1,
+     cex.axis = 1,ylim = c(0,1))
 
 # labeledden <- c(0,3,6,9,12,15)
 # labelsat <- (labeledden-pigcenter)/pigscale
 
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat$pig[1:100],newdat$pred[1:100],col = "darkgreen", lwd = 3)
+lines(newdat$pig[1:100],newdat$pred[1:100],col = "#43BBADFF", lwd = 3)
 lines(newdat$pig[1:100],newdat$pred[1:100] + 1.96*newdat$pred.se[1:100],
-      col = "darkgreen", lwd = 3, lty = "dashed")
+      col = "#43BBADFF", lwd = 2, lty = "dashed")
 lines(newdat$pig[1:100],newdat$pred[1:100] - 1.96*newdat$pred.se[1:100],
-      col = "darkgreen", lwd = 3, lty = "dashed")
-text(x = 0.2, y = 0.95, label = "A", cex = 1.5)
+      col = "#43BBADFF", lwd = 2, lty = "dashed")
+text(x = 0.2, y = 0.95, label = "A", cex = 1)
 
 plot(doefawn$propfawn[doefawn$Season == "Winter"] ~ 
-       doefawn$pig[doefawn$Season == "Winter"],col = "skyblue", pch = 16,
-     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 2,
-     cex.axis = 1.5,ylim = c(0,1))
+       doefawn$pig[doefawn$Season == "Winter"],col = "#35264CFF", pch = 16,
+     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 1,
+     cex.axis = 1,ylim = c(0,1))
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat$pig[101:200],newdat$pred[101:200],col = "skyblue", lwd = 3)
+lines(newdat$pig[101:200],newdat$pred[101:200],col = "#35264CFF", lwd = 3)
 lines(newdat$pig[101:200],newdat$pred[101:200] + 1.96*newdat$pred.se[101:200],
-      col = "skyblue", lwd = 3, lty = "dashed")
+      col = "#35264CFF", lwd = 2, lty = "dashed")
 lines(newdat$pig[101:200],newdat$pred[101:200] - 1.96*newdat$pred.se[101:200],
-      col = "skyblue", lwd = 3, lty = "dashed")
-text(x = 0.2, y = 0.95, label = "B", cex = 1.5)
+      col = "#35264CFF", lwd = 2, lty = "dashed")
+text(x = 0.2, y = 0.95, label = "B", cex = 1)
 
-
+dev.off()
 
 # indicates no relationship between pig density and doe to fawn ratios
 
@@ -610,37 +612,39 @@ ggplot(newdat2, aes(x = pig, y = sspred.rc))+
 # newdat2$se.low <- newdat2$pred-2*sqrt(pvar1)
 # newdat2$se.high <- newdat2$pred+2*sqrt(pvar1)
 
+tiff("../Figures/conditionplot.tiff",res = 300, compression = "lzw",
+     width = 8, height = 4, units = "in")
 par(mfrow = c(1,2))
 par(mar = c(5,5,2,2))
 plot(condition_visits$value[condition_visits$Season == "Summer"] ~ 
-       condition_visits$pig[condition_visits$Season == "Summer"],col = "darkgreen", pch = 16,
+       condition_visits$pig[condition_visits$Season == "Summer"],col = "#43BBADFF", pch = 16,
      xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Deer body condition score",
-     cex.lab = 2,cex.axis = 1.5,ylim = c(0,5))
+     cex.lab = 1,cex.axis = 1,ylim = c(0,5))
 
 # labeledden <- c(0,3,6,9,12,15)
 # labelsat <- (labeledden-pigcenter)/pigscale
 
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat2$pig[1:100],newdat2$sspred.rc[1:100],col = "darkgreen", lwd = 3)
-lines(newdat2$pig[1:100],newdat2$lowCI[1:100],col = "darkgreen", lwd = 2,lty = "dashed")
-lines(newdat2$pig[1:100],newdat2$upCI[1:100],col = "darkgreen", lwd = 2,lty = "dashed")
+lines(newdat2$pig[1:100],newdat2$sspred.rc[1:100],col = "#43BBADFF", lwd = 3)
+lines(newdat2$pig[1:100],newdat2$lowCI[1:100],col = "#43BBADFF", lwd = 2,lty = "dashed")
+lines(newdat2$pig[1:100],newdat2$upCI[1:100],col = "#43BBADFF", lwd = 2,lty = "dashed")
 
-text(x = 0.2, y = 4.9, label = "A", cex = 1.5)
+text(x = 0.2, y = 4.9, label = "A", cex = 1)
 
 
 plot(condition_visits$value[condition_visits$Season == "Winter"] ~ 
-       condition_visits$pig[condition_visits$Season == "Winter"],col = "skyblue", pch = 16,
+       condition_visits$pig[condition_visits$Season == "Winter"],col = "#35264CFF", pch = 16,
      xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Deer body condition score",
-     cex.lab = 2,cex.axis = 1.5,ylim = c(0,5))
+     cex.lab = 1,cex.axis = 1,ylim = c(0,5))
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat2$pig[101:200],newdat2$sspred.rc[101:200],col = "skyblue", lwd = 3)
-lines(newdat2$pig[101:200],newdat2$lowCI[101:200],col = "skyblue", lwd = 2,lty = "dashed")
-lines(newdat2$pig[101:200],newdat2$upCI[101:200],col = "skyblue", lwd = 2,lty = "dashed")
-text(x = 0.2, y = 4.9, label = "B", cex = 1.5)
+lines(newdat2$pig[101:200],newdat2$sspred.rc[101:200],col = "#35264CFF", lwd = 3)
+lines(newdat2$pig[101:200],newdat2$lowCI[101:200],col = "#35264CFF", lwd = 2,lty = "dashed")
+lines(newdat2$pig[101:200],newdat2$upCI[101:200],col = "#35264CFF", lwd = 2,lty = "dashed")
+text(x = 0.2, y = 4.9, label = "B", cex = 1)
 
-
+dev.off()
 
 
 

@@ -161,7 +161,7 @@ This csv file contains information on deer sex, age, and body condition. Each ro
 
 ##### cougar_cluster_investigations
 
-We are unable to share these raw data because of their sensitive nature.
+We are unable to share these raw data because of their sensitive nature. We uploaded a censored version of this data that excludes GPS locations (cougar_clusters_noGPS.csv)
 
 This csv file includes information on cougar kill site investigations. Each row represents a cluster of cougar GPS points that was investigated because it met a criteria to be a possible kill site. Each column provides information on the cluster. There are 62 columns.
 

@@ -68,85 +68,85 @@ actv <- c(actv.summer,actv.fall,actv.winter,actv.spring)
 
 
 #### This commented out section looks at activity overlap of deer and pigs ####
-# 
-# ind_p <- vector()
-# ind_p[1] <- 1
-# for(i in 2:nrow(pig)){
-#   ind_p[i] <- as.numeric(difftime(pig$Date_Time[i], pig$Date_Time[i-1],units = "mins") > 60)
-# }
-# sum(ind_p)
-# 
-# ind_d <- vector()
-# ind_d[1] <- 1
-# for(i in 2:nrow(deer)){
-#   ind_d[i] <- as.numeric(difftime(deer$Date_Time[i], deer$Date_Time[i-1],units = "mins") > 60)
-# }
-# sum(ind_d)
-# 
-# pig$Timerad <- gettime(pig$Time,format = "%H:%M:%S", scale = c("radian"))
-# deer$Timerad <- gettime(deer$Time,format = "%H:%M:%S", scale = c("radian"))
-# 
-# pig.ind.spring <- pig[ind_p == 1 & pig$season == "spring",]
-# pig.ind.summer <- pig[ind_p == 1 & pig$season == "summer",]
-# pig.ind.fall <- pig[ind_p == 1 & pig$season == "fall",]
-# pig.ind.winter <- pig[ind_p == 1 & pig$season == "winter",]
-# 
-# deer.ind.spring <- deer[ind_d == 1 & deer$season == "spring",]
-# deer.ind.summer <- deer[ind_d == 1 & deer$season == "summer",]
-# deer.ind.fall <- deer[ind_d == 1 & deer$season == "fall",]
-# deer.ind.winter <- deer[ind_d == 1 & deer$season == "winter",]
-# 
-# # temporal plot
-# png(filename = "../Figures/pigdeeroverlap.png",height = 8, width = 6,
-#     units = "in",res = 300)
-# par(mfrow = c(2,1))
-# par(mar = c(5,5,2,2))
-# overlapPlot(pig.ind.summer$Timerad,deer.ind.summer$Timerad, xcenter = ("midnight"),
+
+ind_p <- vector()
+ind_p[1] <- 1
+for(i in 2:nrow(pig)){
+  ind_p[i] <- as.numeric(difftime(pig$Date_Time[i], pig$Date_Time[i-1],units = "mins") > 60)
+}
+sum(ind_p)
+
+ind_d <- vector()
+ind_d[1] <- 1
+for(i in 2:nrow(deer)){
+  ind_d[i] <- as.numeric(difftime(deer$Date_Time[i], deer$Date_Time[i-1],units = "mins") > 60)
+}
+sum(ind_d)
+
+pig$Timerad <- gettime(pig$Time,format = "%H:%M:%S", scale = c("radian"))
+deer$Timerad <- gettime(deer$Time,format = "%H:%M:%S", scale = c("radian"))
+
+pig.ind.spring <- pig[ind_p == 1 & pig$season == "spring",]
+pig.ind.summer <- pig[ind_p == 1 & pig$season == "summer",]
+pig.ind.fall <- pig[ind_p == 1 & pig$season == "fall",]
+pig.ind.winter <- pig[ind_p == 1 & pig$season == "winter",]
+
+deer.ind.spring <- deer[ind_d == 1 & deer$season == "spring",]
+deer.ind.summer <- deer[ind_d == 1 & deer$season == "summer",]
+deer.ind.fall <- deer[ind_d == 1 & deer$season == "fall",]
+deer.ind.winter <- deer[ind_d == 1 & deer$season == "winter",]
+
+# temporal plot
+png(filename = "../Figures/pigdeeroverlap.png",height = 8, width = 6,
+    units = "in",res = 300)
+par(mfrow = c(2,1))
+par(mar = c(5,5,2,2))
+overlapPlot(pig.ind.summer$Timerad,deer.ind.summer$Timerad, xcenter = ("midnight"),
+            linetype = c(1,2),linewidth = c(2,2),
+            linecol = c("black","gray40"),main = "",
+            cex.lab = 1.75, cex.axis = 1.25,rug = T)
+text(x = 12, y = 0.1, labels = "A",cex = 1.5)
+legend(x = "topleft", legend = c("pig", "deer"),
+       col = c("black","gray40"),lwd = 2,lty = c(1,2),cex = 1.5)
+# overlapPlot(pig.ind.fall$Timerad,deer.ind.fall$Timerad, xcenter = ("midnight"),
 #             linetype = c(1,2),linewidth = c(2,2),
 #             linecol = c("black","gray40"),main = "",
 #             cex.lab = 1.75, cex.axis = 1.25,rug = T)
-# text(x = 12, y = 0.1, labels = "A",cex = 1.5)
-# legend(x = "topleft", legend = c("pig", "deer"),
-#        col = c("black","gray40"),lwd = 2,lty = c(1,2),cex = 1.5)
-# # overlapPlot(pig.ind.fall$Timerad,deer.ind.fall$Timerad, xcenter = ("midnight"),
-# #             linetype = c(1,2),linewidth = c(2,2),
-# #             linecol = c("black","gray40"),main = "",
-# #             cex.lab = 1.75, cex.axis = 1.25,rug = T)
-# # text(x = 12, y = 0.088, labels = "B",cex = 1.5)
-# overlapPlot(pig.ind.winter$Timerad,deer.ind.winter$Timerad, xcenter = ("midnight"),
+# text(x = 12, y = 0.088, labels = "B",cex = 1.5)
+overlapPlot(pig.ind.winter$Timerad,deer.ind.winter$Timerad, xcenter = ("midnight"),
+            linetype = c(1,2),linewidth = c(2,2),
+            linecol = c("black","gray40"),main = "",
+            cex.lab = 1.75, cex.axis = 1.25,rug = T)
+text(x = 12, y = 0.095, labels = "B",cex = 1.5)
+# overlapPlot(pig.ind.spring$Timerad,deer.ind.spring$Timerad, xcenter = ("midnight"),
 #             linetype = c(1,2),linewidth = c(2,2),
 #             linecol = c("black","gray40"),main = "",
 #             cex.lab = 1.75, cex.axis = 1.25,rug = T)
-# text(x = 12, y = 0.095, labels = "B",cex = 1.5)
-# # overlapPlot(pig.ind.spring$Timerad,deer.ind.spring$Timerad, xcenter = ("midnight"),
-# #             linetype = c(1,2),linewidth = c(2,2),
-# #             linecol = c("black","gray40"),main = "",
-# #             cex.lab = 1.75, cex.axis = 1.25,rug = T)
-# # text(x = 12, y = 0.095, labels = "D",cex = 1.5)
-# dev.off()
-# 
-# #calculate delta overlap stat and check for significant difference in temporal patterns
-# overlapEst(pig.ind.summer$Timerad,deer.ind.summer$Timerad,type = "Dhat4")
-# overlapEst(pig.ind.fall$Timerad,deer.ind.fall$Timerad,type = "Dhat4")
-# overlapEst(pig.ind.winter$Timerad,deer.ind.winter$Timerad,type = "Dhat4")
-# overlapEst(pig.ind.spring$Timerad,deer.ind.spring$Timerad,type = "Dhat4")
-# 
-# sum.est <- bootstrap(pig.ind.summer$Timerad, deer.ind.summer$Timerad,nb = 1000)
-# mean(sum.est)
-# sd(sum.est)/sqrt(sd(sum.est))
-# 
-# win.est <- bootstrap(pig.ind.winter$Timerad, deer.ind.winter$Timerad,nb = 1000)
-# mean(win.est)
-# sd(win.est)/sqrt(sd(win.est))
-# 
-# 
-# 
-# # # use Watson's test for homogeneity to test if
-# # # timing of visits varied by treatment
-# watson.two.test(pig.ind.summer$Timerad,deer.ind.summer$Timerad, alpha = 0.05)
-# watson.two.test(pig.ind.fall$Timerad,deer.ind.fall$Timerad, alpha = 0.05)
-# watson.two.test(pig.ind.winter$Timerad,deer.ind.winter$Timerad, alpha = 0.05)
-# watson.two.test(pig.ind.spring$Timerad,deer.ind.spring$Timerad, alpha = 0.05)
+# text(x = 12, y = 0.095, labels = "D",cex = 1.5)
+dev.off()
+
+#calculate delta overlap stat and check for significant difference in temporal patterns
+overlapEst(pig.ind.summer$Timerad,deer.ind.summer$Timerad,type = "Dhat4")
+overlapEst(pig.ind.fall$Timerad,deer.ind.fall$Timerad,type = "Dhat4")
+overlapEst(pig.ind.winter$Timerad,deer.ind.winter$Timerad,type = "Dhat4")
+overlapEst(pig.ind.spring$Timerad,deer.ind.spring$Timerad,type = "Dhat4")
+
+sum.est <- bootstrap(pig.ind.summer$Timerad, deer.ind.summer$Timerad,nb = 1000)
+mean(sum.est)
+sd(sum.est)/sqrt(sd(sum.est))
+
+win.est <- bootstrap(pig.ind.winter$Timerad, deer.ind.winter$Timerad,nb = 1000)
+mean(win.est)
+sd(win.est)/sqrt(sd(win.est))
+
+
+
+# # use Watson's test for homogeneity to test if
+# # timing of visits varied by treatment
+watson.two.test(pig.ind.summer$Timerad,deer.ind.summer$Timerad, alpha = 0.05)
+watson.two.test(pig.ind.fall$Timerad,deer.ind.fall$Timerad, alpha = 0.05)
+watson.two.test(pig.ind.winter$Timerad,deer.ind.winter$Timerad, alpha = 0.05)
+watson.two.test(pig.ind.spring$Timerad,deer.ind.spring$Timerad, alpha = 0.05)
 
 
 #### Read in camera covariates ####
