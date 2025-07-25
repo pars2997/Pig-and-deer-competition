@@ -224,96 +224,6 @@ Cameraplot <- ggplot()+
   ylab("Northing")
 Cameraplot
 
-cols.fill = c("Group 2" = "grey50", "Group 1" = "grey1")
-cameralocs <- cameralocs %>% 
-  mutate(Set = case_when(
-    Set == "Even" ~ "Group 2",
-    Set == "Odd" ~ "Group 1"
-  ))
-
-
-isotopes <- read.csv("../RawData/UNM_isotopes2.csv")
-kills <- read.csv("../RawData/cougar_cluster_investigations.csv")
-isotopes$ClusterID %in% kills$cluster_id
-kills$cluster_id <- gsub("_","-",kills$cluster_id)
-isotopes$ClusterID <- gsub("_","-",isotopes$ClusterID)
-
-killlocs <- kills %>% 
-  select(cluster_id,centroid_lat,centroid_lon) %>% 
-  filter(cluster_id %in% isotopes$ClusterID)
-
-isotopes <- isotopes %>% 
-  left_join(killlocs, by = join_by(ClusterID == cluster_id))
-isotopes$centroid_lat[is.na(isotopes$centroid_lat)] <- c(35.934,35.983,35.934,35.983,35.925,35.925)
-isotopes$centroid_lon[is.na(isotopes$centroid_lon)] <- c(121.157,121.313,121.157,121.313,121.154,121.154)
-
-isotopes <- isotopes %>% 
-  mutate(Species = case_when(
-    Species == "SUSC" ~ "Pig",
-    Species == "ODHE" ~ "Deer"
-  ))
-isotopes$centroid_lon <- -1*isotopes$centroid_lon
-isotopes_sf <- st_as_sf(isotopes, coords = c("centroid_lon","centroid_lat"),crs = 4326)
-
-cameralocs <- cameralocs %>% 
-  rename("Camera location" = Set)
-
-library(ggnewscale)
-library(ggspatial)
-
-Cameraplot <- ggplot()+
-  geom_spatraster(data = DEM,maxcell = 1000000) +
-  xlim(640000,680000) +
-  ylim(3960000,4000000) +
-  geom_sf(data = cameralocs,aes(pch = `Camera location`), size = 2.5)+
-  # scale_color_manual(name = "Camera location",values = cols.fill)+
-  scale_color_manual(name = "Hair sample species", values = c("grey45","grey95"))+
-  scale_fill_viridis_c(option = "mako",direction = -1)+
-  labs(fill = expression("Elevation (m)"))+
-  geom_sf(data = isotopes_sf, aes(color = Species),size = 1)+
-  geom_sf(data = FHLBoundUTM,color = "black",fill = NA,lwd = 0.8)+
-  theme_bw()+
-  theme(axis.title = element_text(size = 12),
-        axis.text.x = element_text(angle=45, hjust=1),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10))+
-  # ggplot2::annotate("text", x = 641500, y = 3998500, label = "B", size = 6)+
-  coord_sf(datum = st_crs(DEM))+
-  xlab("Easting")+
-  ylab("Northing")+
-  ggspatial::annotation_scale(location = "bl",pad_x = unit(0.5,"cm"), pad_y = unit(0.5,"cm"))+
-  ggspatial::annotation_north_arrow(location = "bl",pad_x = unit(0.5,"cm"), 
-                                    pad_y = unit(0.95,"cm"),width = unit(0.55, "cm"), height = unit(0.7, "cm"))
-
-library(tigris)
-state_shp <- states()
-idaho_shp <- state_shp[state_shp$NAME %in% c("California","Washington","Idaho","Nevada","Oregon",
-                                             "Montana","Utah","Arizona"),]
-FHL_point <- st_as_sf(data.frame(point = "FHL",
-                                 xcord = -121.313,
-                                 ycord = 35.934),coords = c("xcord","ycord"),crs = 4326)
-
-insetmap <- ggplot(idaho_shp)+
-  geom_sf()+
-  geom_sf(data = FHL_point,col = "black", size = 2)+
-  coord_sf(datum = st_crs(DEM))+
-  theme_bw()+
-  theme(axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())+
-  xlim(-125,-112)
-insetmap  
-
-library(cowplot)
-comboplot <- ggdraw()+
-  draw_plot(Cameraplot)+
-  draw_plot(insetmap, height = 0.2, x = 0.1, y = 0.65)
-
-
-tiff("../Figures/CamIsoPlot.tiff",height = 5, width = 6, units = "in",res = 400, compression = "lzw")
-comboplot
-dev.off()
 
 
 # write the holeless boundary file for later use
@@ -386,15 +296,18 @@ pigplot <- ggplot()+
   labs(fill = expression("Pred. pig\ndensity (#/km"^2*")"))+
   geom_sf(data = FHLBound,color = "black",fill = NA,lwd = 1)+
   theme_bw()+
-  theme(axis.title = element_text(size = 12),
+  theme(axis.title = element_text(size = 22),
         axis.text.x = element_text(angle=45, hjust=1),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10))+
+        axis.text = element_text(size = 17),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))+
+  theme(legend.background = element_rect(fill = "#F3FBF5"))+
+  theme(plot.background = element_rect(fill = "#F3FBF5"))+
+  theme(panel.background = element_rect(fill = "#F3FBF5"))+
   # ggplot2::annotate("text", x = 678500, y = 3998500, label = "(a)", size = 5)+
-  coord_sf(datum = st_crs(pig.filtered))+
-  xlab("Easting")+
-  ylab("Northing")
+  # coord_sf(datum = st_crs(pig.filtered))+
+  xlab("Longitude")+
+  ylab("Latitude")
 
 pigplot
 # Then predict pig density for each unique season and write rasters
@@ -463,28 +376,30 @@ deerplot <- ggplot()+
   labs(fill = expression("Pred. deer\ndensity (#/km"^2*")"))+
   geom_sf(data = FHLBound,color = "black",fill = NA,lwd = 1)+
   theme_bw()+
-  theme(axis.title = element_text(size = 12),
+  theme(axis.title = element_text(size = 22),
         axis.text.x = element_text(angle=45, hjust=1),
-        axis.text = element_text(size = 10),
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 10))+
+        axis.text = element_text(size = 17),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))+
   # ggplot2::annotate("text", x = 678500, y = 3998500, label = "B", size = 5)+
-  coord_sf(datum = st_crs(pig.filtered))+
-  xlab("Easting")+
-  ylab("Northing")
+  # coord_sf(datum = st_crs(pig.filtered))+
+  theme(legend.background = element_rect(fill = "#F3FBF5"))+
+  theme(plot.background = element_rect(fill = "#F3FBF5"))+
+  theme(panel.background = element_rect(fill = "#F3FBF5"))+
+  xlab("Longitude")+
+  theme(axis.text.y=element_blank(),axis.ticks.y=element_blank(),
+        axis.title.y=element_blank())
 deerplot
 
-tiff("../Figures/PigDeerDensity_Ecosphere.tiff",width = 7, height = 4,
-     res = 400, units = "in",compression = "lzw")
-ggarrange(plotlist = list(pigplot,deerplot),ncol = 2)
+plotsize <- matrix(c(1,1,1,1,2,2,2,2,2),
+                   nrow = 1, byrow = T)
+png("../Figures/PigDeerDensity_Present.png",width = 12.5, height = 6.5,
+     res = 300, units = "in")
+ggarrange(plotlist = list(pigplot,deerplot),ncol = 2,nrow = 1,widths = c(1.215,1))
 dev.off()
 
-plotsize <- matrix(c(1,2,
-                     1,2,
-                     1,2),
-                   nrow = 3, byrow = T)
-grid.arrange(pigplot,deerplot,layout_matrix = plotsize)
-dev.off()
+
+
 
 
 # predict density for each season and write files

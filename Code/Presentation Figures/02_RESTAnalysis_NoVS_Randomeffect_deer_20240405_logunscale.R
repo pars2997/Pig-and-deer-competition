@@ -97,18 +97,19 @@ deer.ind.fall <- deer[ind_d == 1 & deer$season == "fall",]
 deer.ind.winter <- deer[ind_d == 1 & deer$season == "winter",]
 
 # temporal plot
-tiff(filename = "../Figures/pigdeeroverlap_Color.tiff",height = 7.5, width = 5,
-    units = "in",res = 400,compression = "lzw")
-par(mfrow = c(2,1))
+png(filename = "../Figures/pigdeeroverlap2.png",height = 5.5, width = 11,
+    units = "in",res = 300)
+par(mfrow = c(1,2))
 par(mar = c(5,5,2,2))
+par(bg = "#F3FBF5")
 overlapPlot(pig.ind.summer$Timerad,deer.ind.summer$Timerad, xcenter = ("midnight"),
             linetype = c(1,2),linewidth = c(2,2),
-            linecol = c("#43BBADFF", "#35264CFF"),main = "",
-            cex.lab = 1.25, cex.axis = 1,rug = T,
-            olapcol = "#38639DCC")
-text(x = 12, y = 0.1, labels = "A",cex = 1.25)
+            linecol = c("#35264CFF","#43BBADFF"),main = "",
+            cex.lab = 2.25, cex.axis = 1.75,rug = T)
+# text(x = 12, y = 0.1, labels = "A",cex = 1.5)
 legend(x = "topleft", legend = c("pig", "deer"),
-       col = c("#43BBADFF", "#35264CFF"),lwd = 2,lty = c(1,2),cex = 1.15)
+       col = c("#35264CFF","#43BBADFF"),lwd = 2,lty = c(1,2),cex = 2,
+       bty = "n")
 # overlapPlot(pig.ind.fall$Timerad,deer.ind.fall$Timerad, xcenter = ("midnight"),
 #             linetype = c(1,2),linewidth = c(2,2),
 #             linecol = c("black","gray40"),main = "",
@@ -116,17 +117,15 @@ legend(x = "topleft", legend = c("pig", "deer"),
 # text(x = 12, y = 0.088, labels = "B",cex = 1.5)
 overlapPlot(pig.ind.winter$Timerad,deer.ind.winter$Timerad, xcenter = ("midnight"),
             linetype = c(1,2),linewidth = c(2,2),
-            linecol = c("#43BBADFF", "#35264CFF"),main = "",
-            cex.lab = 1.25, cex.axis = 1,rug = T,
-            olapcol = "#38639DCC")
-text(x = 12, y = 0.095, labels = "B",cex = 1.25)
+            linecol = c("#35264CFF","#43BBADFF"),main = "",
+            cex.lab = 2.25, cex.axis = 1.75,rug = T)
+# text(x = 12, y = 0.095, labels = "B",cex = 1.5)
 # overlapPlot(pig.ind.spring$Timerad,deer.ind.spring$Timerad, xcenter = ("midnight"),
 #             linetype = c(1,2),linewidth = c(2,2),
 #             linecol = c("black","gray40"),main = "",
 #             cex.lab = 1.75, cex.axis = 1.25,rug = T)
 # text(x = 12, y = 0.095, labels = "D",cex = 1.5)
 dev.off()
-
 
 #calculate delta overlap stat and check for significant difference in temporal patterns
 overlapEst(pig.ind.summer$Timerad,deer.ind.summer$Timerad,type = "Dhat4")

@@ -9,7 +9,6 @@ library(sf)
 library(terra)
 library(lme4)
 library(Matrix)
-library(glmmTMB)
 
 #### read in data ####
 # cams is photo data with deer sex and body condition info
@@ -432,8 +431,7 @@ doefawn <- st_drop_geometry(doefawn)
 # remove cameras that never detected deer and calculate total of doe + fawn
 doefawn <- doefawn %>% 
   filter(!is.na(fawn_to_doe)) %>% 
-  mutate(total = doe + fawn,
-         propfawn = fawn/total+0.01)
+  mutate(total = doe + fawn)
 
 # model doe to fawn ratios as a function of pig density
 # season, NDVI, grass dist, riparian dist, and year
@@ -442,13 +440,6 @@ mod1 <- glm(cbind(fawn,doe) ~ pig*Season + NDVI + grass_dist +
             family = binomial(link = "logit"), data = doefawn)
 
 summary(mod1)
-
-mod1beta <- glmmTMB(propfawn ~ pig*Season + NDVI + grass_dist +
-                      riparian_dist + as.factor(Year),
-                    family = beta_family(),data = doefawn)
-summary(mod1beta)
-
-
 newdat <- data.frame(pig = rep(seq(0,15,length = 100),2),
                      Season = rep(c("Summer","Winter"),each = 100),
                      NDVI = rep(mean(doefawn$NDVI),200),
@@ -461,40 +452,40 @@ newdat$pred.se <- predict(mod1,newdat = newdat,se.fit = T,type = "response")$se.
 
 doefawn$propfawn <- doefawn$fawn/(doefawn$doe + doefawn$fawn)
 
-tiff("../Figures/Fawnplot_Ecosphere.tiff",res = 400, compression = "lzw",
-     width = 7, height = 3.2, units = "in")
+png("../Figures/Fawnplot2.png",res = 300,
+     width = 11, height = 5.5, units = "in")
 par(mfrow = c(1,2))
 par(mar = c(5,5,2,2))
-# par(bg = "#F8F5EE")
+par(bg = "#F3FBF5")
 plot(doefawn$propfawn[doefawn$Season == "Summer"] ~ 
-       doefawn$pig[doefawn$Season == "Summer"],col = "#38639DFF", pch = 16,
-     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 1,
-     cex.axis = 0.85,ylim = c(0,1),cex = 0.8)
+       doefawn$pig[doefawn$Season == "Summer"],col = "#43BBADFF", pch = 16,
+     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 2.25,
+     cex.axis = 1.75,ylim = c(0,1),cex = 2)
 
 # labeledden <- c(0,3,6,9,12,15)
 # labelsat <- (labeledden-pigcenter)/pigscale
 
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat$pig[1:100],newdat$pred[1:100],col = "#38639DFF", lwd = 1.75)
+lines(newdat$pig[1:100],newdat$pred[1:100],col = "#43BBADFF", lwd = 3)
 lines(newdat$pig[1:100],newdat$pred[1:100] + 1.96*newdat$pred.se[1:100],
-      col = "#38639DFF", lwd = 1.25, lty = "dashed")
+      col = "#43BBADFF", lwd = 2, lty = "dashed")
 lines(newdat$pig[1:100],newdat$pred[1:100] - 1.96*newdat$pred.se[1:100],
-      col = "#38639DFF", lwd = 1.25, lty = "dashed")
-text(x = 0.2, y = 0.95, label = "A", cex = 1)
+      col = "#43BBADFF", lwd = 2, lty = "dashed")
+# text(x = 0.2, y = 0.95, label = "A", cex = 1)
 
 plot(doefawn$propfawn[doefawn$Season == "Winter"] ~ 
-       doefawn$pig[doefawn$Season == "Winter"],col = "#38639DFF", pch = 16,
-     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 1,
-     cex.axis = 0.85,ylim = c(0,1),cex = 0.8)
+       doefawn$pig[doefawn$Season == "Winter"],col = "#35264CFF", pch = 16,
+     xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Proportion of fawns",cex.lab = 2.25,
+     cex.axis = 1.75,ylim = c(0,1),cex = 2)
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat$pig[101:200],newdat$pred[101:200],col = "#38639DFF", lwd = 1.75)
+lines(newdat$pig[101:200],newdat$pred[101:200],col = "#35264CFF", lwd = 3)
 lines(newdat$pig[101:200],newdat$pred[101:200] + 1.96*newdat$pred.se[101:200],
-      col = "#38639DFF", lwd = 1.25, lty = "dashed")
+      col = "#35264CFF", lwd = 2, lty = "dashed")
 lines(newdat$pig[101:200],newdat$pred[101:200] - 1.96*newdat$pred.se[101:200],
-      col = "#38639DFF", lwd = 1.25, lty = "dashed")
-text(x = 0.2, y = 0.95, label = "B", cex = 1)
+      col = "#35264CFF", lwd = 2, lty = "dashed")
+# text(x = 0.2, y = 0.95, label = "B", cex = 1)
 
 dev.off()
 
@@ -621,37 +612,38 @@ ggplot(newdat2, aes(x = pig, y = sspred.rc))+
 # newdat2$se.low <- newdat2$pred-2*sqrt(pvar1)
 # newdat2$se.high <- newdat2$pred+2*sqrt(pvar1)
 
-tiff("../Figures/conditionplot_Ecosphere.tiff",res = 400, compression = "lzw",
-     width = 7, height = 3.2, units = "in")
+png("../Figures/conditionplot2.png",res = 300,
+     width = 11, height = 5.5, units = "in")
 par(mfrow = c(1,2))
 par(mar = c(5,5,2,2))
+par(bg = "#F3FBF5")
 plot(condition_visits$value[condition_visits$Season == "Summer"] ~ 
-       condition_visits$pig[condition_visits$Season == "Summer"],col = "#38639DFF", pch = 16,
+       condition_visits$pig[condition_visits$Season == "Summer"],col = "#43BBADFF", pch = 16,
      xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Deer body condition score",
-     cex.lab = 1,cex.axis = 0.85,ylim = c(0,5),cex = 0.8)
+     cex.lab = 2.25,cex.axis = 1.75,ylim = c(0,5),cex = 2)
 
 # labeledden <- c(0,3,6,9,12,15)
 # labelsat <- (labeledden-pigcenter)/pigscale
 
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat2$pig[1:100],newdat2$sspred.rc[1:100],col = "#38639DFF", lwd = 1.75)
-lines(newdat2$pig[1:100],newdat2$lowCI[1:100],col = "#38639DFF", lwd = 1.25,lty = "dashed")
-lines(newdat2$pig[1:100],newdat2$upCI[1:100],col = "#38639DFF", lwd = 1.25,lty = "dashed")
+lines(newdat2$pig[1:100],newdat2$sspred.rc[1:100],col = "#43BBADFF", lwd = 3)
+lines(newdat2$pig[1:100],newdat2$lowCI[1:100],col = "#43BBADFF", lwd = 2,lty = "dashed")
+lines(newdat2$pig[1:100],newdat2$upCI[1:100],col = "#43BBADFF", lwd = 2,lty = "dashed")
 
-text(x = 0.2, y = 4.9, label = "A", cex = 1)
+# text(x = 0.2, y = 4.9, label = "A", cex = 1)
 
 
 plot(condition_visits$value[condition_visits$Season == "Winter"] ~ 
-       condition_visits$pig[condition_visits$Season == "Winter"],col = "#38639DFF", pch = 16,
+       condition_visits$pig[condition_visits$Season == "Winter"],col = "#35264CFF", pch = 16,
      xlab = expression("Pig density (#/km" ^2 *")"),ylab = "Deer body condition score",
-     cex.lab = 1,cex.axis = 0.85,ylim = c(0,5),cex = 0.8)
+     cex.lab = 2.25,cex.axis = 1.75,ylim = c(0,5),cex = 2)
 # axis(side = 1, at = labelsat, labels = c("0","3","6","9","12","15"),cex.axis = 1.5)
 
-lines(newdat2$pig[101:200],newdat2$sspred.rc[101:200],col = "#38639DFF", lwd = 3)
-lines(newdat2$pig[101:200],newdat2$lowCI[101:200],col = "#38639DFF", lwd = 2,lty = "dashed")
-lines(newdat2$pig[101:200],newdat2$upCI[101:200],col = "#38639DFF", lwd = 2,lty = "dashed")
-text(x = 0.2, y = 4.9, label = "B", cex = 1)
+lines(newdat2$pig[101:200],newdat2$sspred.rc[101:200],col = "#35264CFF", lwd = 3)
+lines(newdat2$pig[101:200],newdat2$lowCI[101:200],col = "#35264CFF", lwd = 2,lty = "dashed")
+lines(newdat2$pig[101:200],newdat2$upCI[101:200],col = "#35264CFF", lwd = 2,lty = "dashed")
+# text(x = 0.2, y = 4.9, label = "B", cex = 1)
 
 dev.off()
 
